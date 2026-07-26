@@ -30,10 +30,24 @@ CREATE TABLE IF NOT EXISTS daily_summary (
     occupancy INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS sync_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    payload TEXT NOT NULL,
+    synced INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT (datetime('now', 'localtime'))
+);
+
+CREATE TABLE IF NOT EXISTS system_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_visitor_events_timestamp
     ON visitor_events(timestamp);
 CREATE INDEX IF NOT EXISTS idx_visitor_events_camera
     ON visitor_events(camera_id);
+CREATE INDEX IF NOT EXISTS idx_sync_queue_synced
+    ON sync_queue(synced);
 """
 
 

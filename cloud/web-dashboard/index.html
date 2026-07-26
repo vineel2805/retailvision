@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailVision Remote Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0B0F19;
+      --card: rgba(17, 24, 39, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #F8FAFC;
+      --muted: #94A3B8;
+      --accent: #3B82F6;
+      --green: #10B981;
+      --amber: #F59E0B;
+      --pink: #EC4899;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .val { font-size: 1.8rem; font-weight: 700; margin-top: 8px; }
+    .btn {
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      width: 320px; padding: 32px; background: #111827; border-radius: 16px; border: 1px solid var(--border);
+    }
+    input {
+      width: 100%; padding: 10px; margin: 8px 0 16px 0; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); color: white; border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="login-modal" class="login-overlay">
+    <div class="login-box">
+      <h2 style="margin-bottom: 16px;">Remote Login</h2>
+      <label style="color: var(--muted); font-size: 0.85rem;">Username</label>
+      <input type="text" id="username" value="owner">
+      <label style="color: var(--muted); font-size: 0.85rem;">Password</label>
+      <input type="password" id="password" value="retail2026">
+      <button class="btn" style="width: 100%;" onclick="doLogin()">Sign In</button>
+      <p id="login-err" style="color: #EF4444; font-size: 0.8rem; margin-top: 12px; display: none;">Invalid credentials</p>
+    </div>
+  </div>
+
+  <div id="app" style="display: none;">
+    <div class="header">
+      <div>
+        <h1 style="font-size: 1.4rem;">RetailVision Remote Dashboard</h1>
+        <p style="color: var(--muted); font-size: 0.85rem;">Anonymized Store Summary (30s Refresh Rate)</p>
+      </div>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <span style="color: var(--muted); font-size: 0.85rem;">Today's Entries</span>
+        <div class="val" id="entries-val" style="color: var(--green);">0</div>
+      </div>
+      <div class="card">
+        <span style="color: var(--muted); font-size: 0.85rem;">Today's Exits</span>
+        <div class="val" id="exits-val" style="color: var(--amber);">0</div>
+      </div>
+      <div class="card">
+        <span style="color: var(--muted); font-size: 0.85rem;">Current Occupancy</span>
+        <div class="val" id="occupancy-val" style="color: var(--accent);">0</div>
+      </div>
+      <div class="card">
+        <span style="color: var(--muted); font-size: 0.85rem;">Peak Traffic Hour</span>
+        <div class="val" id="peak-val" style="color: var(--pink);">N/A</div>
+      </div>
+    </div>
+
+    <div class="card" style="height: 380px;">
+      <h3 style="font-size: 1rem; margin-bottom: 16px;">Hourly Footfall Trends</h3>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('token');
+    let chartInstance = null;
+
+    if (token) {
+      document.getElementById('login-modal').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      fetchSummary();
+      setInterval(fetchSummary, 30000);
+    }
+
+    async function doLogin() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        token = data.access_token;
+        localStorage.setItem('token', token);
+        document.getElementById('login-modal').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        fetchSummary();
+        setInterval(fetchSummary, 30000);
+      } else {
+        document.getElementById('login-err').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      location.reload();
+    }
+
+    async function fetchSummary() {
+      try {
+        const res = await fetch('/api/remote/summary', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('entries-val').innerText = data.total_entries;
+          document.getElementById('exits-val').innerText = data.total_exits;
+          document.getElementById('occupancy-val').innerText = data.current_occupancy;
+          document.getElementById('peak-val').innerText = data.peak_hour;
+
+          renderChart(data.hourly_data || []);
+        }
+      } catch (err) {
+        console.error('Remote fetch error:', err);
+      }
+    }
+
+    function renderChart(hourlyData) {
+      const labels = hourlyData.map(h => `${h.hour}:00`);
+      const entries = hourlyData.map(h => h.entries);
+      const exits = hourlyData.map(h => h.exits);
+
+      const ctx = document.getElementById('chart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Entries', data: entries, backgroundColor: '#10B981' },
+            { label: 'Exits', data: exits, backgroundColor: '#F59E0B' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

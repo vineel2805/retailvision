@@ -23,6 +23,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import config.settings as settings
+from backend.utils.line_calibrator import select_line_interactive
 from backend.ai.detector import PersonDetector
 from backend.camera.capture import WebcamCapture
 from backend.counting.counter import VisitorCounter
@@ -63,11 +64,7 @@ def main() -> int:
         person_class_id=settings.PERSON_CLASS_ID,
     )
 
-    counting_line = CountingLine(
-        point_a=settings.LINE_POINT_1,
-        point_b=settings.LINE_POINT_2,
-        entry_direction=settings.ENTRY_DIRECTION,
-    )
+    
 
     counter = VisitorCounter(
         counting_line=counting_line,
@@ -85,6 +82,16 @@ def main() -> int:
         width=settings.CAMERA_WIDTH,
         height=settings.CAMERA_HEIGHT,
         fps=settings.CAMERA_FPS,
+    )
+    # NEW: let the user click the line instead of hardcoding it
+    calibrated = select_line_interactive(capture)
+    line_point_1 = calibrated[0] if calibrated else settings.LINE_POINT_1
+    line_point_2 = calibrated[1] if calibrated else settings.LINE_POINT_2
+
+    counting_line = CountingLine(
+        point_a=line_point_1,
+        point_b=line_point_2,
+        entry_direction=settings.ENTRY_DIRECTION,
     )
 
     window_name = "RetailVision Phase 1"

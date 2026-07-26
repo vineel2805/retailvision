@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
+
+logger = logging.getLogger("retailvision.ai.tracker")
 
 
 @dataclass(frozen=True)
@@ -28,6 +31,9 @@ def parse_tracks(results) -> List[TrackedPerson]:
     boxes = result.boxes
     ids = boxes.id
     if ids is None:
+        logger.warning(
+            f"Detections found ({len(boxes)} boxes), but ByteTrack assigned no track IDs (boxes.id is None)."
+        )
         return []
 
     tracked: List[TrackedPerson] = []
@@ -47,4 +53,6 @@ def parse_tracks(results) -> List[TrackedPerson]:
                 confidence=float(confidences[i]),
             )
         )
+
+    logger.debug(f"Parsed {len(tracked)} active person tracks.")
     return tracked

@@ -12,14 +12,14 @@ DB_PATH = DATA_DIR / "retailvision.db"
 CAMERA_INDEX = 0
 CAMERA_NAME = "Default Webcam"
 CAMERA_SOURCE_TYPE = "usb"
-CAMERA_WIDTH = 640
-CAMERA_HEIGHT = 480
+CAMERA_WIDTH = 1280
+CAMERA_HEIGHT = 720
 CAMERA_FPS = 30
 
 # Virtual counting line — two pixel coordinates on the frame (FR-005).
 # Adjust after seeing the live preview; defaults assume 640x480.
-LINE_POINT_1 = (80, 240)
-LINE_POINT_2 = (560, 240)
+LINE_POINT_1 = (40, 240)
+LINE_POINT_2 = (250, 240)
 
 # Which crossing direction counts as ENTRY (FR-005):
 #   "negative_to_positive" — person moves from the right side of the directed

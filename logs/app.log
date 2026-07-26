@@ -1,0 +1,17 @@
+2026-07-26 12:15:08,222 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
+2026-07-26 12:15:08,223 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
+2026-07-26 12:15:27,270 [INFO] [retailvision.ai.onnx] Exporting D:\projects\retailvision\models\yolov8n.pt to ONNX (INT8=False, imgsz=480)...
+2026-07-26 12:16:02,124 [INFO] [retailvision.ai.onnx] Successfully exported ONNX model to D:\projects\retailvision\models\yolov8n.onnx
+2026-07-26 12:16:02,127 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
+2026-07-26 12:16:03,429 [INFO] [retailvision.api.app] Starting RetailVision Local API server...
+2026-07-26 12:16:03,439 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00
+2026-07-26 12:24:00,840 [INFO] [retailvision.api.app] Shutting down RetailVision Local API server...
+2026-07-26 12:24:00,875 [INFO] [retailvision.system.scheduler] Scheduler stopped.
+2026-07-26 12:24:15,753 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
+2026-07-26 12:24:15,756 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
+2026-07-26 12:26:21,723 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
+2026-07-26 12:26:22,373 [INFO] [retailvision.api.app] Starting RetailVision Local API server...
+2026-07-26 12:26:22,381 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00
+2026-07-26 12:48:39,464 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
+2026-07-26 12:48:39,466 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
+2026-07-26 12:51:40,179 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
