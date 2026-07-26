@@ -32,7 +32,7 @@ def draw_overlay(
 
 
 def _draw_zone_polygon(frame: np.ndarray, polygon: List[Point]) -> None:
-    """Draw semi-transparent filled polygon zone with bright outline and vertex markers."""
+    """Draw semi-transparent filled polygon zone with bright outline."""
     if len(polygon) < 3:
         return
 
@@ -42,20 +42,6 @@ def _draw_zone_polygon(frame: np.ndarray, polygon: List[Point]) -> None:
     cv2.addWeighted(overlay, 0.15, frame, 0.85, 0, frame)
 
     cv2.polylines(frame, [pts], isClosed=True, color=(255, 220, 0), thickness=2, lineType=cv2.LINE_AA)
-
-    for i, pt in enumerate(polygon):
-        px, py = int(pt[0]), int(pt[1])
-        cv2.circle(frame, (px, py), 5, (0, 255, 255), -1, lineType=cv2.LINE_AA)
-        cv2.putText(
-            frame,
-            f"P{i+1}",
-            (px + 6, py - 6),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.4,
-            (0, 255, 255),
-            1,
-            cv2.LINE_AA,
-        )
 
 
 def _draw_tracks(

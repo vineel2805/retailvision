@@ -12,10 +12,10 @@ from backend.api.deps import engine
 router = APIRouter(prefix="/api/video_feed", tags=["Video"])
 
 
-def generate_frames():
-    """Yields MJPEG video stream frames from the lock-protected latest annotated frame buffer."""
+def generate_frames(hide_zone: bool = False):
+    """Yields MJPEG video stream frames from the lock-protected latest frame buffer."""
     while True:
-        frame = engine.get_latest_annotated_frame()
+        frame = engine.get_latest_annotated_frame(hide_zone=hide_zone)
         if frame is None:
             time.sleep(0.03)
             continue
@@ -34,9 +34,9 @@ def generate_frames():
 
 
 @router.get("")
-def stream_video_feed():
+def stream_video_feed(hide_zone: bool = False):
     """Returns multipart MJPEG live video stream."""
     return StreamingResponse(
-        generate_frames(),
+        generate_frames(hide_zone=hide_zone),
         media_type="multipart/x-mixed-replace; boundary=frame",
     )

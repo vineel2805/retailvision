@@ -59,21 +59,21 @@ class SystemEngine:
             fps=settings.CAMERA_FPS,
         )
 
-        # Load persisted Zone Tracker config from SQLite settings if available
+        # Load user-saved Zone Tracker config from SQLite settings if available
         saved_poly_str = self.repository.get_setting("zone_polygon")
         saved_frames_str = self.repository.get_setting("zone_confirmation_frames")
 
         if saved_poly_str:
             try:
-                default_polygon = json.loads(saved_poly_str)
+                active_polygon = json.loads(saved_poly_str)
             except Exception:
-                default_polygon = [(20.0, 20.0), (620.0, 20.0), (620.0, 460.0), (20.0, 460.0)]
+                active_polygon = []
         else:
-            default_polygon = [(20.0, 20.0), (620.0, 20.0), (620.0, 460.0), (20.0, 460.0)]
+            active_polygon = []
 
         conf_frames = int(saved_frames_str) if saved_frames_str else 5
 
-        self.zone_config = ZoneConfig(camera_id=self.camera_id, polygon=default_polygon, confirmation_frames=conf_frames)
+        self.zone_config = ZoneConfig(camera_id=self.camera_id, polygon=active_polygon, confirmation_frames=conf_frames)
         self.zone_tracker = ZoneOccupancyTracker(self.zone_config)
 
         # Visitor Counter
@@ -110,6 +110,7 @@ class SystemEngine:
         self._is_running: bool = False
 
         self._latest_annotated_frame: Optional[np.ndarray] = None
+        self._latest_clean_frame: Optional[np.ndarray] = None
         self._frame_lock = threading.Lock()
         self._processing_thread: Optional[threading.Thread] = None
 
@@ -152,7 +153,7 @@ class SystemEngine:
                 results = self.detector.track(frame)
                 tracks = parse_tracks(results)
 
-                # Zone-based occupancy update
+                # Zone-based occupancy update using user's active polygon
                 frame_result = self.counter.zone_tracker.update(tracks)
                 self.counter._current_occupancy = frame_result.occupancy
 
@@ -175,9 +176,10 @@ class SystemEngine:
                 frame_count = 0
                 fps_timer = time.perf_counter()
 
-            # Render overlay on frame with polygon zone and foot-points
+            # Render full overlay with user's saved polygon (for Live Monitor)
+            full_frame = frame.copy()
             draw_overlay(
-                frame=frame,
+                frame=full_frame,
                 tracks=tracks,
                 entries=self.counter.entries,
                 exits=self.counter.exits,
@@ -187,17 +189,32 @@ class SystemEngine:
                 inside_track_ids=inside_ids,
             )
 
+            # Render clean overlay without polygon (for interactive Zone Setup editor)
+            clean_frame = frame.copy()
+            draw_overlay(
+                frame=clean_frame,
+                tracks=tracks,
+                entries=self.counter.entries,
+                exits=self.counter.exits,
+                occupancy=self.counter.occupancy,
+                fps=self.fps,
+                zone_tracker=None,  # Suppress backend polygon draw
+                inside_track_ids=inside_ids,
+            )
+
             with self._frame_lock:
-                self._latest_annotated_frame = frame.copy()
+                self._latest_annotated_frame = full_frame
+                self._latest_clean_frame = clean_frame
 
             time.sleep(0.005)
 
-    def get_latest_annotated_frame(self) -> Optional[np.ndarray]:
+    def get_latest_annotated_frame(self, hide_zone: bool = False) -> Optional[np.ndarray]:
         """Return latest annotated frame safely from shared buffer."""
         with self._frame_lock:
-            if self._latest_annotated_frame is None:
+            target = self._latest_clean_frame if hide_zone else self._latest_annotated_frame
+            if target is None:
                 return None
-            return self._latest_annotated_frame.copy()
+            return target.copy()
 
     def start(self) -> None:
         if self._is_running:

@@ -22,11 +22,6 @@ class ZoneConfig:
     polygon: List[Point] = field(default_factory=list)
     confirmation_frames: int = 5
 
-    def __post_init__(self) -> None:
-        if len(self.polygon) < 3:
-            # Default fallback rectangle zone if fewer than 3 points provided
-            self.polygon = [(20.0, 20.0), (620.0, 20.0), (620.0, 460.0), (20.0, 460.0)]
-
 
 @dataclass
 class ZoneFrameResult:
@@ -39,9 +34,9 @@ class ZoneFrameResult:
 
 class ZoneOccupancyTracker:
     """
-    Evaluates live occupancy by testing person foot-points against a polygon zone.
+    Evaluates live occupancy by testing person foot-points against a user-created polygon zone.
     Implements N-frame hysteresis to eliminate boundary jitter.
-    Occupancy is computed fresh every frame call — never an accumulator.
+    Occupancy is a live self-correcting count of confirmed tracks inside the zone.
     """
 
     def __init__(self, config: Optional[ZoneConfig] = None):
@@ -51,25 +46,30 @@ class ZoneOccupancyTracker:
         self._pending_count: Dict[int, int] = {}
 
     def set_polygon(self, polygon: List[Point]) -> None:
-        """Update polygon coordinates."""
+        """Update active polygon coordinates."""
         if len(polygon) >= 3:
             self.config.polygon = polygon
 
     @property
-    def polygon_np(self) -> np.ndarray:
-        """Return polygon points as OpenCV-compatible int32 numpy array."""
+    def polygon_np(self) -> Optional[np.ndarray]:
+        """Return polygon points as OpenCV-compatible int32 numpy array if valid."""
+        if len(self.config.polygon) < 3:
+            return None
         return np.array(self.config.polygon, dtype=np.int32)
 
     def is_foot_inside(self, bbox: Tuple[int, int, int, int]) -> bool:
         """
-        Test if foot-point (bottom-center of bounding box) lies inside polygon zone.
+        Test if foot-point (bottom-center of bounding box) lies inside the active polygon zone.
         Foot-point = ((x1 + x2) / 2.0, float(y2)).
         """
+        pts = self.polygon_np
+        if pts is None:
+            return False
+
         x1, y1, x2, y2 = bbox
         foot_x = (x1 + x2) / 2.0
         foot_y = float(y2)
 
-        pts = self.polygon_np
         res = cv2.pointPolygonTest(pts, (foot_x, foot_y), False)
         return res >= 0
 
