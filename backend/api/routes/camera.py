@@ -5,18 +5,11 @@ from typing import List, Tuple
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
 
+import config.settings as settings
 from backend.api.deps import engine
 from backend.camera.capture import create_capture_source
-from backend.counting.line import CountingLine
-from backend.counting.zone import ZoneConfig
 
 router = APIRouter(prefix="/api/camera", tags=["Camera"])
-
-
-class LineConfigRequest(BaseModel):
-    point_a: Tuple[int, int]
-    point_b: Tuple[int, int]
-    entry_direction: str = "negative_to_positive"
 
 
 class ZoneConfigRequest(BaseModel):
@@ -35,28 +28,31 @@ class CameraConfigRequest(BaseModel):
 
 @router.get("")
 def get_camera_info():
-    """Return camera configuration, active zone polygon, and confirmation frames."""
+    """Return camera configuration, active zone polygon, confirmation frames, and frame dimensions."""
     camera = engine.repository.get_camera_by_id(engine.camera_id)
+    frame_width = engine.frame_width or settings.CAMERA_WIDTH
+    frame_height = engine.frame_height or settings.CAMERA_HEIGHT
     return {
         "camera": camera,
         "zone": {
             "polygon": engine.counter.zone_tracker.config.polygon,
             "confirmation_frames": engine.counter.zone_tracker.config.confirmation_frames,
-        },
-        "line": {
-            "point_a": engine.counting_line.point_a if engine.counting_line else (40, 240),
-            "point_b": engine.counting_line.point_b if engine.counting_line else (250, 240),
-            "entry_direction": engine.counting_line.entry_direction if engine.counting_line else "negative_to_positive",
+            "frame_width": frame_width,
+            "frame_height": frame_height,
         },
     }
 
 
 @router.get("/zone")
 def get_zone_config():
-    """Return current polygon zone coordinates and confirmation frames."""
+    """Return current polygon zone coordinates, confirmation frames, and frame dimensions."""
+    frame_width = engine.frame_width or settings.CAMERA_WIDTH
+    frame_height = engine.frame_height or settings.CAMERA_HEIGHT
     return {
         "polygon": engine.counter.zone_tracker.config.polygon,
         "confirmation_frames": engine.counter.zone_tracker.config.confirmation_frames,
+        "frame_width": frame_width,
+        "frame_height": frame_height,
     }
 
 
@@ -74,17 +70,6 @@ def update_zone_config(config: ZoneConfigRequest):
     engine.repository.set_setting("zone_confirmation_frames", str(config.confirmation_frames))
 
     return {"status": "success", "zone": config}
-
-
-@router.post("/line")
-def update_line_config(config: LineConfigRequest):
-    """Update virtual counting line coordinates and direction (Legacy)."""
-    engine.counting_line = CountingLine(
-        point_a=config.point_a,
-        point_b=config.point_b,
-        entry_direction=config.entry_direction,
-    )
-    return {"status": "success", "line": config}
 
 
 @router.post("/config")

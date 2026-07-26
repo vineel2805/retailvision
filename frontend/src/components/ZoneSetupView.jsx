@@ -2,15 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Square, Check, RefreshCw, Plus, Trash2 } from 'lucide-react';
 
 export default function ZoneSetupView({ telemetry }) {
-  const FRAME_W = 640;
-  const FRAME_H = 480;
+  // Dynamic frame dimensions loaded from backend camera API
+  const [frameDims, setFrameDims] = useState({ w: 1280, h: 720 });
 
-  // Single source of truth for polygon coordinates (in 640x480 video frame space)
+  // Single source of truth for polygon coordinates (in real camera frame space)
   const [polygon, setPolygon] = useState([
-    [40, 40],
-    [600, 40],
-    [600, 440],
-    [40, 440],
+    [64, 36],
+    [1216, 36],
+    [1216, 684],
+    [64, 684],
   ]);
   const [confirmationFrames, setConfirmationFrames] = useState(5);
   const [draggingIdx, setDraggingIdx] = useState(null);
@@ -19,14 +19,29 @@ export default function ZoneSetupView({ telemetry }) {
 
   const containerRef = useRef(null);
 
-  // Fetch current active zone configuration directly from backend API on mount
+  // Fetch current active zone configuration and frame dimensions directly from backend API on mount
   useEffect(() => {
     fetch('/api/camera/zone')
       .then((res) => res.json())
       .then((data) => {
+        const w = data?.frame_width || 1280;
+        const h = data?.frame_height || 720;
+        setFrameDims({ w, h });
+
         if (data?.polygon && data.polygon.length >= 3) {
           setPolygon(data.polygon);
-          setConfirmationFrames(data.confirmation_frames || 5);
+        } else {
+          // Default polygon with 5% margins based on dynamic frame dimensions
+          setPolygon([
+            [Math.round(w * 0.05), Math.round(h * 0.05)],
+            [Math.round(w * 0.95), Math.round(h * 0.05)],
+            [Math.round(w * 0.95), Math.round(h * 0.95)],
+            [Math.round(w * 0.05), Math.round(h * 0.95)],
+          ]);
+        }
+
+        if (data?.confirmation_frames) {
+          setConfirmationFrames(data.confirmation_frames);
         }
       })
       .catch((err) => console.error('Failed to load active zone config:', err));
@@ -41,12 +56,12 @@ export default function ZoneSetupView({ telemetry }) {
     const relX = clientX - rect.left;
     const relY = clientY - rect.top;
 
-    const frameX = Math.round((relX / rect.width) * FRAME_W);
-    const frameY = Math.round((relY / rect.height) * FRAME_H);
+    const frameX = Math.round((relX / rect.width) * frameDims.w);
+    const frameY = Math.round((relY / rect.height) * frameDims.h);
 
     return [
-      Math.max(0, Math.min(FRAME_W, frameX)),
-      Math.max(0, Math.min(FRAME_H, frameY)),
+      Math.max(0, Math.min(frameDims.w, frameX)),
+      Math.max(0, Math.min(frameDims.h, frameY)),
     ];
   };
 
@@ -58,10 +73,10 @@ export default function ZoneSetupView({ telemetry }) {
     const handleThreshold = 25; // 25px click detection radius
 
     const clickedIdx = polygon.findIndex((pt) => {
-      const handleScreenX = (pt[0] / FRAME_W) * rect.width;
-      const handleScreenY = (pt[1] / FRAME_H) * rect.height;
-      const clickScreenX = (coords[0] / FRAME_W) * rect.width;
-      const clickScreenY = (coords[1] / FRAME_H) * rect.height;
+      const handleScreenX = (pt[0] / frameDims.w) * rect.width;
+      const handleScreenY = (pt[1] / frameDims.h) * rect.height;
+      const clickScreenX = (coords[0] / frameDims.w) * rect.width;
+      const clickScreenY = (coords[1] / frameDims.h) * rect.height;
       const dist = Math.hypot(handleScreenX - clickScreenX, handleScreenY - clickScreenY);
       return dist <= handleThreshold;
     });
@@ -111,7 +126,7 @@ export default function ZoneSetupView({ telemetry }) {
   };
 
   const addPoint = () => {
-    const newPoly = [...polygon, [320, 240]];
+    const newPoly = [...polygon, [Math.round(frameDims.w / 2), Math.round(frameDims.h / 2)]];
     setPolygon(newPoly);
     setSelectedIdx(newPoly.length - 1);
   };
@@ -125,22 +140,17 @@ export default function ZoneSetupView({ telemetry }) {
 
   const resetDefault = () => {
     setPolygon([
-      [40, 40],
-      [600, 40],
-      [600, 440],
-      [40, 440],
+      [Math.round(frameDims.w * 0.05), Math.round(frameDims.h * 0.05)],
+      [Math.round(frameDims.w * 0.95), Math.round(frameDims.h * 0.05)],
+      [Math.round(frameDims.w * 0.95), Math.round(frameDims.h * 0.95)],
+      [Math.round(frameDims.w * 0.05), Math.round(frameDims.h * 0.95)],
     ]);
     setSelectedIdx(null);
   };
 
-  // Single Source of Truth for handles & polygon (Numeric SVG coordinates using viewBox)
+  // Single Source of Truth for handles & polygon (Numeric SVG coordinates using dynamic viewBox)
   const handles = polygon;
   const pointsStr = polygon.map(([x, y]) => `${x},${y}`).join(' ');
-
-  // Debugging Logs
-  console.log("Polygon:", polygon);
-  console.log("Handles:", handles);
-  console.log("SVG Points:", pointsStr);
 
   return (
     <div style={{ margin: '0 24px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: '20px' }}>
@@ -151,7 +161,7 @@ export default function ZoneSetupView({ telemetry }) {
             <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Visual Zone Polygon Editor</h2>
           </div>
           <span style={{ fontSize: '0.8rem', color: '#06B6D4', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            Click & Drag handles directly on video to reshape
+            Frame Resolution: {frameDims.w} x {frameDims.h}
           </span>
         </div>
 
@@ -179,9 +189,9 @@ export default function ZoneSetupView({ telemetry }) {
             style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }}
           />
 
-          {/* Single SVG Overlay using viewBox matching video frame dimensions */}
+          {/* Single SVG Overlay using dynamic viewBox matching actual camera frame dimensions */}
           <svg
-            viewBox={`0 0 ${FRAME_W} ${FRAME_H}`}
+            viewBox={`0 0 ${frameDims.w} ${frameDims.h}`}
             preserveAspectRatio="none"
             style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
           >
@@ -203,7 +213,7 @@ export default function ZoneSetupView({ telemetry }) {
                   <circle
                     cx={x}
                     cy={y}
-                    r={isSelected ? 12 : 9}
+                    r={isSelected ? 14 : 10}
                     fill={isSelected ? '#38BDF8' : '#06B6D4'}
                     stroke="#FFFFFF"
                     strokeWidth="2.5"
@@ -215,7 +225,7 @@ export default function ZoneSetupView({ telemetry }) {
                     dy="4"
                     textAnchor="middle"
                     fill="#000"
-                    fontSize="10"
+                    fontSize="11"
                     fontWeight="bold"
                     pointerEvents="none"
                   >

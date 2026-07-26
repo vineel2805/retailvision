@@ -44,6 +44,10 @@ class SystemEngine:
         # Benchmark hardware adaptive tier
         self.adaptive_config: AdaptiveConfig = AdaptivePerformanceManager.benchmark_system()
 
+        # Dynamic frame dimension attributes
+        self.frame_width: Optional[int] = None
+        self.frame_height: Optional[int] = None
+
         # Camera source setup
         self.camera_id = self.repository.ensure_camera(
             name=settings.CAMERA_NAME,
@@ -132,6 +136,8 @@ class SystemEngine:
             "tier": self.adaptive_config.tier,
             "zone_polygon": self.counter.zone_tracker.config.polygon,
             "confirmation_frames": self.counter.zone_tracker.config.confirmation_frames,
+            "frame_width": self.frame_width or settings.CAMERA_WIDTH,
+            "frame_height": self.frame_height or settings.CAMERA_HEIGHT,
         }
 
     def _processing_loop(self) -> None:
@@ -148,6 +154,9 @@ class SystemEngine:
             if not ok or frame is None:
                 time.sleep(0.01)
                 continue
+
+            # Update real frame dimensions from ingested camera frame
+            self.frame_height, self.frame_width = frame.shape[:2]
 
             try:
                 results = self.detector.track(frame)
