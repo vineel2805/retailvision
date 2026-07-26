@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Camera, Cpu, LayoutDashboard, BarChart3, Settings, ShieldCheck } from 'lucide-react';
+import { Activity, Camera, Cpu, LayoutDashboard, BarChart3, Settings, ShieldCheck, Square } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, telemetry }) {
   const isCameraOnline = telemetry?.camera_status === 'online';
@@ -15,7 +15,7 @@ export default function Navbar({ activeTab, setActiveTab, telemetry }) {
           <h1 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', background: 'linear-gradient(90deg, #fff, #94A3B8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             RetailVision
           </h1>
-          <p style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 500 }}>AI People-Counting Engine v2.0</p>
+          <p style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 500 }}>Zone Occupancy Engine v2.0</p>
         </div>
       </div>
 
@@ -23,7 +23,7 @@ export default function Navbar({ activeTab, setActiveTab, telemetry }) {
         {[
           { id: 'live', label: 'Live Monitor', icon: LayoutDashboard },
           { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
-          { id: 'camera', label: 'Line Setup', icon: Camera },
+          { id: 'zone', label: 'Zone Setup', icon: Square },
           { id: 'settings', label: 'Settings', icon: Settings },
         ].map((tab) => {
           const Icon = tab.icon;

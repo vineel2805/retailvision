@@ -123,12 +123,12 @@ def main() -> int:
 
             draw_overlay(
                 frame=frame,
-                counting_line=counting_line,
                 tracks=tracks,
                 entries=counter.entries,
                 exits=counter.exits,
                 occupancy=counter.occupancy,
                 fps=fps,
+                zone_tracker=counter.zone_tracker,
             )
 
             cv2.imshow(window_name, frame)

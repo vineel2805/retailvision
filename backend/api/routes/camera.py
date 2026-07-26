@@ -1,12 +1,14 @@
-"""Camera management and virtual line calibration router (FR-001, FR-005)."""
+"""Camera management, line calibration, and polygon zone configuration router (FR-001, FR-005, Phase 3)."""
 
-from typing import Tuple
+import json
+from typing import List, Tuple
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
 
 from backend.api.deps import engine
 from backend.camera.capture import create_capture_source
 from backend.counting.line import CountingLine
+from backend.counting.zone import ZoneConfig
 
 router = APIRouter(prefix="/api/camera", tags=["Camera"])
 
@@ -15,6 +17,11 @@ class LineConfigRequest(BaseModel):
     point_a: Tuple[int, int]
     point_b: Tuple[int, int]
     entry_direction: str = "negative_to_positive"
+
+
+class ZoneConfigRequest(BaseModel):
+    polygon: List[Tuple[float, float]]
+    confirmation_frames: int = 5
 
 
 class CameraConfigRequest(BaseModel):
@@ -28,27 +35,55 @@ class CameraConfigRequest(BaseModel):
 
 @router.get("")
 def get_camera_info():
-    """Return camera configuration and active line coordinates."""
+    """Return camera configuration, active zone polygon, and confirmation frames."""
     camera = engine.repository.get_camera_by_id(engine.camera_id)
     return {
         "camera": camera,
+        "zone": {
+            "polygon": engine.counter.zone_tracker.config.polygon,
+            "confirmation_frames": engine.counter.zone_tracker.config.confirmation_frames,
+        },
         "line": {
-            "point_a": engine.counting_line.point_a,
-            "point_b": engine.counting_line.point_b,
-            "entry_direction": engine.counting_line.entry_direction,
+            "point_a": engine.counting_line.point_a if engine.counting_line else (40, 240),
+            "point_b": engine.counting_line.point_b if engine.counting_line else (250, 240),
+            "entry_direction": engine.counting_line.entry_direction if engine.counting_line else "negative_to_positive",
         },
     }
 
 
+@router.get("/zone")
+def get_zone_config():
+    """Return current polygon zone coordinates and confirmation frames."""
+    return {
+        "polygon": engine.counter.zone_tracker.config.polygon,
+        "confirmation_frames": engine.counter.zone_tracker.config.confirmation_frames,
+    }
+
+
+@router.post("/zone")
+def update_zone_config(config: ZoneConfigRequest):
+    """Update active polygon zone coordinates and hysteresis confirmation frames (Phase 3)."""
+    if len(config.polygon) < 3:
+        raise HTTPException(status_code=400, detail="Polygon must contain at least 3 points.")
+
+    engine.counter.zone_tracker.set_polygon(config.polygon)
+    engine.counter.zone_tracker.config.confirmation_frames = max(1, config.confirmation_frames)
+
+    # Persist in SQLite system_settings
+    engine.repository.set_setting("zone_polygon", json.dumps(config.polygon))
+    engine.repository.set_setting("zone_confirmation_frames", str(config.confirmation_frames))
+
+    return {"status": "success", "zone": config}
+
+
 @router.post("/line")
 def update_line_config(config: LineConfigRequest):
-    """Update virtual counting line coordinates and direction."""
+    """Update virtual counting line coordinates and direction (Legacy)."""
     engine.counting_line = CountingLine(
         point_a=config.point_a,
         point_b=config.point_b,
         entry_direction=config.entry_direction,
     )
-    engine.counter.counting_line = engine.counting_line
     return {"status": "success", "line": config}
 
 

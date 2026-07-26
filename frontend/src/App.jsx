@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import StatsGrid from './components/StatsGrid';
 import LiveFeedView from './components/LiveFeedView';
 import AnalyticsView from './components/AnalyticsView';
-import LineSetupView from './components/LineSetupView';
+import ZoneSetupView from './components/ZoneSetupView';
 import SettingsView from './components/SettingsView';
 
 export default function App() {
@@ -11,7 +11,6 @@ export default function App() {
   const [telemetry, setTelemetry] = useState(null);
 
   useEffect(() => {
-    // Fetch stats via REST or WebSocket
     const fetchTelemetry = async () => {
       try {
         const res = await fetch('/api/stats');
@@ -36,7 +35,7 @@ export default function App() {
 
       {activeTab === 'live' && <LiveFeedView telemetry={telemetry} />}
       {activeTab === 'analytics' && <AnalyticsView />}
-      {activeTab === 'camera' && <LineSetupView telemetry={telemetry} />}
+      {activeTab === 'zone' && <ZoneSetupView telemetry={telemetry} />}
       {activeTab === 'settings' && <SettingsView />}
     </div>
   );

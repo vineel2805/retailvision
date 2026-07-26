@@ -1,3 +1,6 @@
 2026-07-26 12:16:03,439 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00
 2026-07-26 12:24:00,875 [INFO] [retailvision.system.scheduler] Scheduler stopped.
 2026-07-26 12:26:22,381 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00
+2026-07-26 12:51:45,044 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00
+2026-07-26 13:06:45,022 [INFO] [retailvision.system.reconciliation] [RECONCILIATION] Drift corrected! Idle duration: 580.3s. Occupancy adjusted: 3 -> 0
+2026-07-26 13:55:06,229 [INFO] [retailvision.system.scheduler] Scheduler started. Daily reset scheduled for 00:00

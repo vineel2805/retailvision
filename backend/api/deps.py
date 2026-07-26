@@ -1,7 +1,8 @@
-"""Dependency injection and global state manager for the local FastAPI app (Fixes Bug 1 & Bug 2)."""
+"""Dependency injection and global state manager for the local FastAPI app."""
 
 from __future__ import annotations
 
+import json
 import logging
 import psutil
 import sqlite3
@@ -17,7 +18,7 @@ from backend.ai.adaptive import AdaptiveConfig, AdaptivePerformanceManager
 from backend.ai.detector import PersonDetector
 from backend.camera.capture import BaseCapture, create_capture_source
 from backend.counting.counter import VisitorCounter
-from backend.counting.line import CountingLine
+from backend.counting.zone import ZoneConfig, ZoneOccupancyTracker
 from backend.counting.reconciliation import OccupancyReconciler
 from backend.counting.scheduler import CounterScheduler
 from backend.database.repository import CountingRepository
@@ -58,22 +59,32 @@ class SystemEngine:
             fps=settings.CAMERA_FPS,
         )
 
-        # Counting Line
-        self.counting_line = CountingLine(
-            point_a=settings.LINE_POINT_1,
-            point_b=settings.LINE_POINT_2,
-            entry_direction=settings.ENTRY_DIRECTION,
-        )
+        # Load persisted Zone Tracker config from SQLite settings if available
+        saved_poly_str = self.repository.get_setting("zone_polygon")
+        saved_frames_str = self.repository.get_setting("zone_confirmation_frames")
+
+        if saved_poly_str:
+            try:
+                default_polygon = json.loads(saved_poly_str)
+            except Exception:
+                default_polygon = [(20.0, 20.0), (620.0, 20.0), (620.0, 460.0), (20.0, 460.0)]
+        else:
+            default_polygon = [(20.0, 20.0), (620.0, 20.0), (620.0, 460.0), (20.0, 460.0)]
+
+        conf_frames = int(saved_frames_str) if saved_frames_str else 5
+
+        self.zone_config = ZoneConfig(camera_id=self.camera_id, polygon=default_polygon, confirmation_frames=conf_frames)
+        self.zone_tracker = ZoneOccupancyTracker(self.zone_config)
 
         # Visitor Counter
         self.counter = VisitorCounter(
-            counting_line=self.counting_line,
             repository=self.repository,
             camera_id=self.camera_id,
+            zone_tracker=self.zone_tracker,
         )
         self.counter.sync_from_database()
 
-        # Person Detector (default roi_padding=None so full human height is preserved)
+        # Person Detector
         model_path = settings.MODELS_DIR / self.adaptive_config.model_name
         if not model_path.exists():
             model_path = settings.MODELS_DIR / "yolov8n.pt"
@@ -95,7 +106,7 @@ class SystemEngine:
         self.scheduler = CounterScheduler(counter=self.counter, reconciler=self.reconciler)
 
         self.fps: float = 0.0
-        self.ai_health_status: str = "healthy"  # "healthy", "degraded", "restarting"
+        self.ai_health_status: str = "healthy"
         self._is_running: bool = False
 
         self._latest_annotated_frame: Optional[np.ndarray] = None
@@ -118,12 +129,12 @@ class SystemEngine:
             "camera_status": camera_status,
             "ai_health": self.ai_health_status,
             "tier": self.adaptive_config.tier,
-            "line_p1": self.counting_line.point_a,
-            "line_p2": self.counting_line.point_b,
+            "zone_polygon": self.counter.zone_tracker.config.polygon,
+            "confirmation_frames": self.counter.zone_tracker.config.confirmation_frames,
         }
 
     def _processing_loop(self) -> None:
-        """Dedicated background loop running detection, counting, and overlay rendering."""
+        """Dedicated background loop running detection, zone counting, and overlay rendering."""
         frame_count = 0
         fps_timer = time.perf_counter()
 
@@ -138,16 +149,24 @@ class SystemEngine:
                 continue
 
             try:
-                line_points = (self.counting_line.point_a, self.counting_line.point_b)
-                results = self.detector.track(frame, line_points=line_points)
+                results = self.detector.track(frame)
                 tracks = parse_tracks(results)
-                self.counter.process_tracks(tracks)
+
+                # Zone-based occupancy update
+                frame_result = self.counter.zone_tracker.update(tracks)
+                self.counter._current_occupancy = frame_result.occupancy
+
+                for event in frame_result.events:
+                    self.counter._record_event(event)
+
                 self.reconciler.update_activity(len(tracks))
                 self.ai_health_status = "healthy"
+                inside_ids = frame_result.inside_track_ids
             except Exception as e:
                 logger.error(f"AI Detection error in main engine loop: {e}")
                 self.ai_health_status = "degraded"
                 tracks = []
+                inside_ids = set()
 
             frame_count += 1
             elapsed = time.perf_counter() - fps_timer
@@ -156,15 +175,16 @@ class SystemEngine:
                 frame_count = 0
                 fps_timer = time.perf_counter()
 
-            # Render overlay on frame
+            # Render overlay on frame with polygon zone and foot-points
             draw_overlay(
                 frame=frame,
-                counting_line=self.counting_line,
                 tracks=tracks,
                 entries=self.counter.entries,
                 exits=self.counter.exits,
                 occupancy=self.counter.occupancy,
                 fps=self.fps,
+                zone_tracker=self.counter.zone_tracker,
+                inside_track_ids=inside_ids,
             )
 
             with self._frame_lock:

@@ -20,11 +20,12 @@ from backend.ai.roi import ROICropper
 from backend.camera.capture import DirectWebcamCapture, ThreadedCapture, create_capture_source
 from backend.counting.counter import VisitorCounter
 from backend.counting.line import CountingLine
+from backend.counting.zone import ZoneConfig, ZoneOccupancyTracker
 from backend.counting.reconciliation import OccupancyReconciler
 from backend.database.repository import CountingRepository
 from backend.database.schema import init_database
 from backend.sync.worker import SyncWorker
-from backend.tracking.tracker import parse_tracks
+from backend.tracking.tracker import parse_tracks, TrackedPerson
 from backend.utils.exporter import ReportExporter
 from cloud.api.main import app as cloud_app
 from cloud.auth.jwt import create_access_token
@@ -97,14 +98,20 @@ def test_repository_and_reports(temp_db):
 
 def test_occupancy_reconciliation(temp_db):
     repo = CountingRepository(temp_db)
-    line = CountingLine((0, 10), (100, 10), "negative_to_positive")
-    counter = VisitorCounter(counting_line=line, repository=repo, camera_id=1, entries=5, exits=2)
+    poly = [(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)]
+    config = ZoneConfig(camera_id=1, polygon=poly, confirmation_frames=1)
+    tracker = ZoneOccupancyTracker(config)
+    counter = VisitorCounter(repository=repo, camera_id=1, zone_tracker=tracker)
 
-    assert counter.occupancy == 3
+    # Add active track inside zone
+    t1 = TrackedPerson(track_id=1, bbox=(10, 10, 30, 30), centroid=(20.0, 20.0), confidence=0.9)
+    counter.process_tracks([t1])
+    assert counter.occupancy == 1
 
     reconciler = OccupancyReconciler(idle_threshold_seconds=0.1)
     reconciler.last_track_timestamp -= 1.0  # simulate 1s idle
 
+    # Reconcile when active tracks disappear
     corrected = reconciler.check_and_reconcile(counter, force=False)
     assert corrected == 0
     assert counter.occupancy == 0

@@ -1,4 +1,4 @@
-"""Occupancy drift correction reconciliation engine (FR-016)."""
+"""Occupancy drift correction reconciliation engine (FR-016, Zone-based)."""
 
 from __future__ import annotations
 
@@ -42,9 +42,8 @@ class OccupancyReconciler:
 
         if force or (idle_duration >= self.idle_threshold_seconds and counter.occupancy > 0):
             old_occ = counter.occupancy
-            # When store has been idle with no motion for threshold, true occupancy should be 0.
-            # Adjust exits to match entries (or clamp occupancy to 0).
-            counter.exits = counter.entries
+            # Reconcile live occupancy against current active tracks in zone tracker
+            counter.process_tracks([])
             new_occ = counter.occupancy
 
             logger.info(

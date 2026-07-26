@@ -9,3 +9,105 @@
 2026-07-26 12:48:39,464 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
 2026-07-26 12:48:39,466 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
 2026-07-26 12:51:40,179 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
+2026-07-26 12:53:50,107 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:53:50,135 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:53:50,406 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:53:50,439 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:54:27,604 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:54:27,630 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:55:26,177 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:55:26,209 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:56:04,944 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:56:04,982 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:56:06,131 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 12:56:06,156 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:53:04,886 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
+2026-07-26 13:53:04,887 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
+2026-07-26 13:55:05,184 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
+2026-07-26 13:55:37,355 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:55:37,392 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:09,066 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:09,102 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:14,235 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:14,273 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:15,548 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:15,626 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:16,435 [WARNING] [retailvision.ai.tracker] Detections found (2 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:16,469 [WARNING] [retailvision.ai.tracker] Detections found (2 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:16,794 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:56:16,821 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:57:05,421 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:57:05,445 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:37,049 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:37,082 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:53,739 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:53,766 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:54,242 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:54,268 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:58,777 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 13:59:58,804 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:11,440 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:11,468 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:17,673 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:17,701 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:18,001 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:00:18,030 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:07:27,790 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:07:27,820 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:09:14,227 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:09:14,251 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:12:14,921 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:12:14,964 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:13:25,230 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:13:25,344 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:15:58,456 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:15:58,487 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:16:04,011 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:16:04,039 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:16:04,756 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:16:04,784 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:09,053 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:09,131 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:12,831 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:12,894 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:15,789 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:16,175 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:57,116 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:17:57,177 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:18:00,637 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:18:00,707 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:19:40,277 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:19:40,311 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:07,272 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:07,310 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:25,131 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:25,163 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:27,213 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:20:27,271 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:21:39,412 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:21:39,442 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:21:48,757 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:21:48,786 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:22:49,079 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:22:49,147 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:22:52,123 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:22:52,177 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:23:43,755 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:23:43,779 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:24:28,497 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:24:28,522 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:24:28,946 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:24:28,975 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:26,236 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:26,272 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:28,418 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:28,460 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:29,712 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:25:29,757 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:26:45,365 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:26:45,392 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:28:11,837 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:28:11,879 [WARNING] [retailvision.ai.tracker] Detections found (1 boxes), but ByteTrack assigned no track IDs (boxes.id is None).
+2026-07-26 14:30:26,811 [INFO] [retailvision.ai.adaptive] Hardware Benchmark: CPU=8 cores, RAM=5.89 GB, GPU=None
+2026-07-26 14:30:26,813 [INFO] [retailvision.ai.adaptive] Auto-selected performance tier: LOW_POWER (AdaptiveConfig(tier='low_power', model_name='yolov8n.pt', frame_skip=2, inference_size=480, roi_enabled=True, use_onnx=True, cpu_cores=8, ram_gb=5.89, gpu_available=False, gpu_name='None'))
+2026-07-26 14:32:39,025 [INFO] [retailvision.ai.detector] Initializing PersonDetector with model: D:\projects\retailvision\models\yolov8n.onnx
